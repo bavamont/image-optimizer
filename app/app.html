@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title id="appTitle">Image Optimizer</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/bootstrap-colorpicker/css/bootstrap-colorpicker.css">
+    <link rel="stylesheet" href="assets/app/style.css">
+    <link rel="stylesheet" href="assets/material-icons/material-design-icons.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark py-0 hidden" id="navbar">
+        <div class="row">
+            <div class="col-10">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <img src="assets/app/icon.svg" style="padding-top: 6px; padding-right: 5px; height: 22px; width: 22px;">
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="showImageOptimizerView">Image Optimizer</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="showHelpView">Help</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="exitView">Exit</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-2">
+                <ul class="navbar-nav float-right">
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-window nav-minimize" href="#" id="minimizeWindow"><i class="material-icons md-light md-14" title="Minimize">minimize</i></a>
+                    </li>
+                    <li class="nav-item hidden">
+                        <a class="nav-link nav-link-window nav-maximize" href="#" id="maximizeWindow"><i class="material-icons md-light md-14" title="Maximize">crop_din</i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-window nav-close" href="#" id="closeWindow"><i class="material-icons md-light md-14" title="Close">close</i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="splashScreen">
+        <div class="row h-100">
+            <div class="col text-center my-auto">
+                <img src="assets/app/bavamont.svg" width="250"><br>
+                <p class="mt-5"><strong id="loading">Loading...</strong></p>
+                <p class="mt-5">
+                    Copyright &copy; Bavamont<br>
+                    All rights reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+    <main id="main" role="main" class="hidden">
+        <div class="container-fluid">
+            <div id="overlay">
+                <div class="row h-100">
+                    <div class="col-12 my-auto text-center">
+                        <div class="spinner-border text-light spinner-border-lg" role="status"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center" style="padding-top: 20px;">
+                <!-- Image Optimizer -->
+                <div class="col text-center hidden" id="imageOptimizerView">
+                    <div id="dropzone">
+                        <div class="pt-4">
+                            <h4><i id="dropYourFilesHereText">Drop your files here.</i></h4>
+                            <i class="material-icons md-48">get_app</i>
+                        </div>
+                    </div>
+                    <!-- Row 1 -->
+                    <div class="row pt-3">
+                        <div class="col-4">
+                            <div class="row pb-1">
+                                <div class="col my-auto text-left">
+                                    <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" value="1" id="changeOutputFormat">
+                                        <label class="custom-control-label" for="changeOutputFormat" id="changeOutputFormatText">Change output format</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col my-auto text-left">
+                                    <label for="outputFormat" id="outputFormatText">Output format</label>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <select class="form-control form-control-sm" id="outputFormat">
+                                        <option value="jpg">JPG/JPEG</option>
+                                        <option value="png">PNG</option>
+                                        <option value="tiff">TIFF</option>
+                                        <option value="webp">WEBP</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row pb-1">
+                                <div class="col my-auto text-left">
+                                    <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" value="1" id="changeOutputCompression">
+                                        <label class="custom-control-label" for="changeOutputCompression" id="changeOutputCompressionText">Change compression</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col my-auto text-left">
+                                    <label for="outputCompressionLevel" id="outputCompressionLevelText">Compression level</label>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <input type="number" class="form-control form-control-sm" id="outputCompressionLevel" value="80" min="1" max="100" step="1">
+                                </div>
+                            </div>
+                            <div class="row pb-1">
+                                <div class="col my-auto text-left">
+                                    <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" value="1" id="changeIncludeSubdirectories">
+                                        <label class="custom-control-label" for="changeIncludeSubdirectories" id="changeIncludeSubdirectoriesText">Include subdirectories</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pb-1">
+                                <div class="col my-auto text-left">
+                                    <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" value="1" id="changeCopyNonImageFiles">
+                                        <label class="custom-control-label" for="changeCopyNonImageFiles" id="changeCopyNonImageFilesText">Copy all files to output directory</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pb-1">
+                                <div class="col my-auto text-left">
+                                    <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" value="1" id="changeOutputDirectory">
+                                        <label class="custom-control-label" for="changeOutputDirectory" id="changeOutputDirectoryText">Use custom output directory</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="padding-top:4px;">
+                                <div class="col my-auto text-left">
+                                    <label for="outputDirectory" id="outputDirectoryText">Output directory</label>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control form-control-sm" id="outputDirectory" value="">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary btn-sm" type="button" id="outputDirectoryButton">Select</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="row pb-1">
+                                <div class="col my-auto text-left">
+                                    <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" value="1" id="changeOutputSize">
+                                        <label class="custom-control-label" for="changeOutputSize" id="changeOutputSizeText">Change output size</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col my-auto text-left">
+                                    <label for="outputSize" id="outputSizeText">Output size (width x height)</label>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <div class="input-group input-group-sm">
+                                        <input type="number" class="form-control form-control-sm" id="outputSizeWidth" value="1920" min="1" step="1">
+                                        <div class="input-group-append">
+                                            <div class="input-group-text form-control-sm">px</div>
+                                        </div>
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text form-control-sm">x</div>
+                                        </div>
+                                        <input type="number" class="form-control form-control-sm" id="outputSizeHeight" value="1080" min="1" step="1">
+                                        <div class="input-group-append">
+                                            <div class="input-group-text form-control-sm">px</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col my-auto text-left">
+                                    <label for="outputSizeType" id="outputSizeTypeText">Resize type</label>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <select class="form-control form-control-sm" id="outputSizeType">
+                                        <option value="cover" id="outputSizeTypeCropText">Crop</option>
+                                        <option value="contain" id="outputSizeTypeCoverText">Contain</option>
+                                        <option value="fill" id="outputSizeTypeFillText">Stretch</option>
+                                        <option value="inside" id="outputSizeTypeInsideText">Inside</option>
+                                        <option value="outside" id="outputSizeTypeOutsideText">Outside</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row pb-1">
+                                <div class="col my-auto text-left">
+                                    <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" value="1" id="changeUseWatermark">
+                                        <label class="custom-control-label" for="changeUseWatermark" id="changeUseWatermarkText">Use watermark</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col my-auto text-left">
+                                    <label for="watermarkFile" id="watermarkFileText">Watermark file</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control form-control-sm" id="watermarkFile" value="">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary btn-sm" type="button" id="watermarkFileButton">Select</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pb-1">
+                                <div class="col" style="font-size: 10px !important; line-height: 120%;">
+                                    <i id="watermarkDescriptionText">watermarkDescriptionText</i>
+                                </div>
+                            </div>
+                            <div class="row" style="padding-top:4px;">
+                                <div class="col my-auto text-left">
+                                    <label for="watermarkPosition" id="watermarkPositionText">Watermark position</label>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <select class="form-control form-control-sm" id="watermarkPosition">
+                                        <option value="centre" id="watermarkPositionCenterText">Center</option>
+                                        <option value="northwest" id="watermarkPositionTopLeftText">Top, Left</option>
+                                        <option value="northeast" id="watermarkPositionTopRightText">Top, Right</option>
+                                        <option value="southwest" id="watermarkPositionBottomLeftText">Bottom, Left</option>
+                                        <option value="southeast" id="watermarkPositionBottomRightText">Bottom, Right</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="row pb-1">
+                                <div class="col my-auto text-left">
+                                    <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" value="1" id="changeOutputName">
+                                        <label class="custom-control-label" for="changeOutputName" id="changeOutputNameText">Batch rename</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col my-auto text-left">
+                                    <label for="outputNameFormat" id="outputNameFormatText">Name pattern</label>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <input type="text" class="form-control form-control-sm" id="outputNameFormat" value="">
+                                </div>
+                            </div>
+                            <div class="row pb-1">
+                                <div class="col my-auto text-left">
+                                    <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" value="1" id="changeResetCounter">
+                                        <label class="custom-control-label" for="changeResetCounter" id="changeResetCounterText">Reset counter in every directory</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col my-auto text-left">
+                                    <label for="outputStartCountingFrom" id="outputStartCountingFromText">Start counting from</label>
+                                </div>
+                            </div>
+                            <div class="row pb-2">
+                                <div class="col">
+                                    <input type="number" class="form-control form-control-sm" id="outputStartCountingFrom" value="1" min="0" step="1">
+                                </div>
+                            </div>
+                            <div class="row pb-1">
+                                <div class="col my-auto text-left">
+                                    <div class="custom-control custom-switch">
+                                        <input class="custom-control-input" type="checkbox" value="1" id="changeOutputLetterCase">
+                                        <label class="custom-control-label" for="changeOutputLetterCase" id="changeOutputLetterCaseText">Change letter case</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col my-auto text-left">
+                                    <label for="outputLetterCase" id="outputLetterCaseText">Letter case</label>
+                                </div>
+                            </div>
+                            <div class="row pb-1">
+                                <div class="col">
+                                    <select class="form-control form-control-sm" id="outputLetterCase">
+                                        <option value="lowercase" id="outputLetterCaseLowercaseText">Lowercase</option>
+                                        <option value="uppercase" id="outputLetterCaseUppercaseText">Uppercase</option>
+                                        <option value="namelowercase" id="outputLetterCaseNameLowercaseText">Name lowercase</option>
+                                        <option value="nameuppercase" id="outputLetterCaseNameUppercaseText">Name uppercase</option>
+                                        <option value="extensionlowercase" id="outputLetterCaseExtensionLowercaseText">Extension lowercase</option>
+                                        <option value="extensionuppercase" id="outputLetterCaseExtensionUppercaseText">Extension uppercase</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col my-auto text-left">
+                                    <label for="outputBackgroundColor" id="outputBackgroundColorText">Background color</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div id="outputBackgroundColorWrapper" class="input-group input-group-sm" data-color="rgb(0, 0, 0)">
+                                        <input type="text" class="form-control form-control-sm" id="outputBackgroundColor" />
+                                        <span class="input-group-append">
+                                            <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Row 2 -->
+                </div>
+                <!-- Help -->
+                <div class="col hidden" id="helpView">
+                    <div class="row">
+                        <div class="col-6">
+                            <div id="resizeDescriptionText">resizeDescriptionText</div>
+                        </div>
+                        <div class="col-6">
+                            <div id="helpDescriptionText">helpDescriptionText</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <p>
+                                <img src="assets/app/icons/64x64.png" class="py-2"><br>
+                                <strong>Image Optimizer</strong>, v<span id="softwareVersion"></span><br>
+                                Copyright &copy; 2019 - 2020, Bavamont<br>
+                                Michael Kutzer (mk@bavamont.com)<br>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer hidden">
+        <div class="container">
+            <div class="col text-center" id="console">
+                &nbsp;
+            </div>
+        </div>
+    </footer>
+    <script src="assets/jquery/jquery-3.4.0.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="assets/bootstrap-colorpicker/js/bootstrap-colorpicker.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
