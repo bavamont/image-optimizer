@@ -16,8 +16,7 @@ function createWindow() {
         minHeight: 600,
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false,
-            enableRemoteModule: true
+            contextIsolation: false
         },
         icon: getIconPath(),
         show: false,
@@ -66,28 +65,24 @@ function setupAutoUpdater() {
     autoUpdater.checkForUpdatesAndNotify();
 
     autoUpdater.on('checking-for-update', () => {
-        console.log('Checking for update...');
         if (mainWindow) {
             mainWindow.webContents.send('update-checking');
         }
     });
 
     autoUpdater.on('update-available', (info) => {
-        console.log('Update available:', info);
         if (mainWindow) {
             mainWindow.webContents.send('update-available', info);
         }
     });
 
     autoUpdater.on('update-not-available', (info) => {
-        console.log('Update not available:', info);
         if (mainWindow) {
             mainWindow.webContents.send('update-not-available', info);
         }
     });
 
     autoUpdater.on('error', (err) => {
-        console.error('Update error:', err);
         if (mainWindow) {
             mainWindow.webContents.send('update-error', err);
         }
@@ -100,7 +95,6 @@ function setupAutoUpdater() {
     });
 
     autoUpdater.on('update-downloaded', (info) => {
-        console.log('Update downloaded:', info);
         updateDownloaded = true;
         if (mainWindow) {
             mainWindow.webContents.send('update-downloaded', info);
@@ -116,7 +110,6 @@ function checkForUpdates() {
     try {
         autoUpdater.checkForUpdatesAndNotify();
     } catch (error) {
-        console.error('Error checking for updates:', error);
     }
 }
 
@@ -125,7 +118,6 @@ ipcMain.handle('check-for-updates', async () => {
         const result = await autoUpdater.checkForUpdates();
         return { success: true, updateInfo: result };
     } catch (error) {
-        console.error('Error checking for updates:', error);
         return { success: false, error: error.message };
     }
 });
@@ -135,7 +127,6 @@ ipcMain.handle('download-update', async () => {
         await autoUpdater.downloadUpdate();
         return { success: true };
     } catch (error) {
-        console.error('Error downloading update:', error);
         return { success: false, error: error.message };
     }
 });
@@ -149,7 +140,6 @@ ipcMain.handle('install-update', async () => {
             return { success: false, error: 'No update downloaded' };
         }
     } catch (error) {
-        console.error('Error installing update:', error);
         return { success: false, error: error.message };
     }
 });
@@ -232,15 +222,63 @@ ipcMain.handle('select-images', async () => {
                     modified: stats.mtime,
                     created: stats.birthtime
                 };
-                files.push(fileInfo);
+                
+                if (fileInfo.isImage) {
+                    files.push(fileInfo);
+                }
             } catch (error) {
-                console.error(`Error getting file stats for ${filePath}:`, error);
             }
         }
 
         return { success: true, files };
     } catch (error) {
-        console.error('Error selecting images:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('select-combiner-files', async () => {
+    try {
+        const { filePaths, canceled } = await dialog.showOpenDialog(mainWindow, {
+            properties: ['openFile', 'multiSelections'],
+            filters: [
+                { name: 'Images & PDFs', extensions: ['jpg', 'jpeg', 'png', 'webp', 'tiff', 'tif', 'gif', 'avif', 'svg', 'pdf'] },
+                { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'webp', 'tiff', 'tif', 'gif', 'avif', 'svg'] },
+                { name: 'PDF Files', extensions: ['pdf'] },
+                { name: 'All Files', extensions: ['*'] }
+            ],
+            title: 'Select Images and PDF Files'
+        });
+
+        if (canceled) {
+            return { success: false, canceled: true };
+        }
+
+        const files = [];
+        for (const filePath of filePaths) {
+            try {
+                const stats = await fs.stat(filePath);
+                const ext = path.extname(filePath).toLowerCase();
+                const fileInfo = {
+                    path: filePath,
+                    name: path.basename(filePath),
+                    size: stats.size,
+                    extension: ext,
+                    directory: path.dirname(filePath),
+                    isImage: isImageFile(filePath),
+                    isPDF: ext === '.pdf',
+                    modified: stats.mtime,
+                    created: stats.birthtime
+                };
+                
+                if (fileInfo.isImage || fileInfo.isPDF) {
+                    files.push(fileInfo);
+                }
+            } catch (error) {
+            }
+        }
+
+        return { success: true, files };
+    } catch (error) {
         return { success: false, error: error.message };
     }
 });
@@ -265,7 +303,6 @@ ipcMain.handle('select-folder', async () => {
             files
         };
     } catch (error) {
-        console.error('Error selecting folder:', error);
         return { success: false, error: error.message };
     }
 });
@@ -300,7 +337,6 @@ ipcMain.handle('select-output-folder', async (event, defaultPath = null) => {
 
         return { success: true, folder: selectedPath };
     } catch (error) {
-        console.error('Error selecting output folder:', error);
         return { success: false, error: error.message };
     }
 });
@@ -319,7 +355,6 @@ ipcMain.handle('get-default-output-folder', async (event, sourceFiles = []) => {
 
         return { success: true, folder: defaultFolder };
     } catch (error) {
-        console.error('Error getting default output folder:', error);
         return { success: false, error: error.message };
     }
 });
@@ -344,7 +379,6 @@ ipcMain.handle('browse-for-output-folder', async (event, options = {}) => {
 
         return { success: true, folder: filePaths[0] };
     } catch (error) {
-        console.error('Error browsing for output folder:', error);
         return { success: false, error: error.message };
     }
 });
@@ -362,7 +396,7 @@ ipcMain.handle('validate-output-folder', async (event, folderPath) => {
         }
 
         try {
-            await fs.access(folderPath, fs.constants.W_OK);
+            await fs.access(folderPath, fsSync.constants.W_OK);
         } catch (error) {
             return { success: false, error: 'Directory is not writable' };
         }
@@ -379,7 +413,21 @@ ipcMain.handle('validate-output-folder', async (event, folderPath) => {
         if (error.code === 'ENOENT') {
             return { success: false, error: 'Directory does not exist', canCreate: true };
         }
-        console.error('Error validating output folder:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('create-output-directory', async (event, outputPath) => {
+    try {
+        await fs.mkdir(outputPath, { recursive: true });
+
+        const stats = await fs.stat(outputPath);
+        if (stats.isDirectory()) {
+            return { success: true, path: outputPath };
+        } else {
+            return { success: false, error: 'Path exists but is not a directory' };
+        }
+    } catch (error) {
         return { success: false, error: error.message };
     }
 });
@@ -417,23 +465,6 @@ ipcMain.handle('select-watermark', async () => {
             return { success: false, error: 'Unable to access watermark file' };
         }
     } catch (error) {
-        console.error('Error selecting watermark:', error);
-        return { success: false, error: error.message };
-    }
-});
-
-ipcMain.handle('create-output-directory', async (event, outputPath) => {
-    try {
-        await fs.mkdir(outputPath, { recursive: true });
-
-        const stats = await fs.stat(outputPath);
-        if (stats.isDirectory()) {
-            return { success: true, path: outputPath };
-        } else {
-            return { success: false, error: 'Path exists but is not a directory' };
-        }
-    } catch (error) {
-        console.error('Error creating output directory:', error);
         return { success: false, error: error.message };
     }
 });
@@ -469,7 +500,6 @@ ipcMain.handle('get-file-stats', async (event, filePath) => {
             }
         };
     } catch (error) {
-        console.error('Error getting file stats:', error);
         return { success: false, error: error.message };
     }
 });
@@ -482,7 +512,6 @@ ipcMain.handle('open-folder', async (event, folderPath) => {
         }
         return { success: true };
     } catch (error) {
-        console.error('Error opening folder:', error);
         return { success: false, error: error.message };
     }
 });
@@ -492,7 +521,6 @@ ipcMain.handle('show-item-in-folder', async (event, filePath) => {
         shell.showItemInFolder(filePath);
         return { success: true };
     } catch (error) {
-        console.error('Error showing item in folder:', error);
         return { success: false, error: error.message };
     }
 });
@@ -512,7 +540,6 @@ ipcMain.handle('get-system-language', async () => {
             systemLanguages: app.getPreferredSystemLanguages()
         };
     } catch (error) {
-        console.error('Error getting system language:', error);
         return { success: false, error: error.message, language: 'en' };
     }
 });
@@ -536,7 +563,6 @@ ipcMain.handle('get-system-info', async () => {
             hostname: os.hostname()
         };
     } catch (error) {
-        console.error('Error getting system info:', error);
         return { success: false, error: error.message };
     }
 });
@@ -563,7 +589,7 @@ ipcMain.handle('save-settings', async (event, settings, filePath = null) => {
         }
 
         const settingsData = {
-            version: '1.0.0',
+            version: '1.1.0',
             timestamp: new Date().toISOString(),
             settings: settings
         };
@@ -571,7 +597,6 @@ ipcMain.handle('save-settings', async (event, settings, filePath = null) => {
         await fs.writeFile(savePath, JSON.stringify(settingsData, null, 2), 'utf8');
         return { success: true, path: savePath };
     } catch (error) {
-        console.error('Error saving settings:', error);
         return { success: false, error: error.message };
     }
 });
@@ -610,7 +635,6 @@ ipcMain.handle('load-settings', async (event, filePath = null) => {
             timestamp: settingsData.timestamp
         };
     } catch (error) {
-        console.error('Error loading settings:', error);
         return { success: false, error: error.message };
     }
 });
@@ -631,7 +655,6 @@ ipcMain.handle('show-error-dialog', async (event, title, message, detail = null)
         await dialog.showMessageBox(mainWindow, options);
         return { success: true };
     } catch (error) {
-        console.error('Error showing error dialog:', error);
         return { success: false, error: error.message };
     }
 });
@@ -652,7 +675,6 @@ ipcMain.handle('show-info-dialog', async (event, title, message, detail = null) 
         await dialog.showMessageBox(mainWindow, options);
         return { success: true };
     } catch (error) {
-        console.error('Error showing info dialog:', error);
         return { success: false, error: error.message };
     }
 });
@@ -675,7 +697,6 @@ ipcMain.handle('show-warning-dialog', async (event, title, message, buttons = ['
             buttonClicked: buttons[result.response]
         };
     } catch (error) {
-        console.error('Error showing warning dialog:', error);
         return { success: false, error: error.message };
     }
 });
@@ -699,7 +720,6 @@ ipcMain.handle('show-question-dialog', async (event, title, message, buttons = [
             canceled: result.response === buttons.length - 1
         };
     } catch (error) {
-        console.error('Error showing question dialog:', error);
         return { success: false, error: error.message };
     }
 });
@@ -712,10 +732,30 @@ ipcMain.handle('get-app-version', async () => {
     };
 });
 
+ipcMain.handle('cancel-processing', async () => {
+    try {
+        if (mainWindow) {
+            mainWindow.webContents.send('processing-cancelled');
+        }
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
 function isImageFile(filePath) {
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.tiff', '.tif', '.gif', '.avif', '.svg'];
     const ext = path.extname(filePath).toLowerCase();
     return imageExtensions.includes(ext);
+}
+
+function isPDFFile(filePath) {
+    const ext = path.extname(filePath).toLowerCase();
+    return ext === '.pdf';
+}
+
+function isSupportedFile(filePath) {
+    return isImageFile(filePath) || isPDFFile(filePath);
 }
 
 async function scanFolderForImages(folderPath, includeSubdirectories = false, currentDepth = 0, maxDepth = 10) {
@@ -723,7 +763,6 @@ async function scanFolderForImages(folderPath, includeSubdirectories = false, cu
 
     try {
         if (currentDepth > maxDepth) {
-            console.warn(`Maximum depth reached for ${folderPath}`);
             return files;
         }
 
@@ -748,27 +787,22 @@ async function scanFolderForImages(folderPath, includeSubdirectories = false, cu
                     };
                     files.push(fileInfo);
                 } catch (error) {
-                    console.error(`Error getting stats for ${fullPath}:`, error);
                 }
             } else if (entry.isDirectory() && includeSubdirectories) {
                 try {
                     const subFiles = await scanFolderForImages(fullPath, true, currentDepth + 1, maxDepth);
                     files.push(...subFiles);
                 } catch (error) {
-                    console.error(`Error scanning subdirectory ${fullPath}:`, error);
                 }
             }
         }
     } catch (error) {
-        console.error(`Error reading directory ${folderPath}:`, error);
     }
 
     return files;
 }
 
 process.on('uncaughtException', (error) => {
-    console.error('Uncaught Exception:', error);
-
     if (mainWindow && !mainWindow.isDestroyed()) {
         dialog.showErrorBox('Unexpected Error',
             `An unexpected error occurred: ${error.message}\n\nThe application will continue running, but you may want to restart it.`
@@ -777,7 +811,6 @@ process.on('uncaughtException', (error) => {
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 app.enableSandbox = false;

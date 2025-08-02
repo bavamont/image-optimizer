@@ -28,8 +28,8 @@
         </div>
     </div>
 
-    <div class="app-container">
-        <header class="app-header">
+    <div class="app-container" id="app-container">
+        <header class="app-header" id="app-header">
             <div class="header-content">
                 <div class="header-left">
                     <h1><img src="assets/logo.svg" alt="Image Optimizer" class="header-logo"> <span data-i18n="app.title">Image Optimizer</span></h1>
@@ -49,7 +49,7 @@
         </header>
 
         <main class="app-main">
-            <nav class="sidebar">
+            <nav class="sidebar" id="sidebar">
                 <div class="sidebar-content">
                     <div class="nav-section">
                         <div class="nav-item active" data-tab="optimizer">
@@ -57,10 +57,10 @@
                             <span data-i18n="nav.optimizer">Image Optimizer</span>
                             <div class="nav-tooltip" data-i18n="nav.optimizer.tooltip">Batch process and optimize images</div>
                         </div>
-                        <div class="nav-item" data-tab="settings">
-                            <i class="fas fa-cogs"></i>
-                            <span data-i18n="nav.settings">Advanced Settings</span>
-                            <div class="nav-tooltip" data-i18n="nav.settings.tooltip">Advanced processing options</div>
+                        <div class="nav-item" data-tab="combiner">
+                            <i class="fas fa-layer-group"></i>
+                            <span data-i18n="nav.combiner">Image Combiner</span>
+                            <div class="nav-tooltip" data-i18n="nav.combiner.tooltip">Combine multiple images into one</div>
                         </div>
                         <div class="nav-item" data-tab="help">
                             <i class="fas fa-question-circle"></i>
@@ -72,7 +72,48 @@
             </nav>
 
             <div class="content-area">
-                <div class="tab-content active" id="optimizer-tab">
+                <div class="tab-content active" id="start-tab">
+                    <div class="start-page">
+                        <div class="animated-bg">
+                            <div class="bg-gradient"></div>
+                            <div class="bg-pattern"></div>
+                        </div>
+                        
+                        <div class="start-header">
+                            <h1 class="start-title">
+                                <span class="title-word" data-i18n="start.title.image">Image</span>
+                                <span class="title-word accent" data-i18n="start.title.tools">Tools</span>
+                            </h1>
+                        </div>
+                        
+                        <div class="start-options">
+                            <div class="start-option" data-action="optimizer">
+                                <div class="option-glow"></div>
+                                <div class="option-content">
+                                    <div class="option-icon">
+                                        <i class="fas fa-magic"></i>
+                                    </div>
+                                    <h2 data-i18n="start.optimize.title">Optimize</h2>
+                                    <p data-i18n="start.optimize.description">Batch process, resize, convert formats, and enhance your images</p>
+                                </div>
+                            </div>
+                            
+                            <div class="start-option" data-action="combiner">
+                                <div class="option-glow"></div>
+                                <div class="option-content">
+                                    <div class="option-icon">
+                                        <i class="fas fa-th"></i>
+                                    </div>
+                                    <h2 data-i18n="start.combine.title">Combine</h2>
+                                    <p data-i18n="start.combine.description">Merge multiple images or PDFs into stunning collages</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="optimizer-tab">
                     <div class="page-header">
                         <h2><i class="fas fa-image"></i> <span data-i18n="optimizer.title">Image Optimizer</span></h2>
                         <p data-i18n="optimizer.subtitle">Drag and drop images or folders for batch processing</p>
@@ -147,6 +188,12 @@
                                         <button class="btn btn-outline" id="browse-output-folder">
                                             <i class="fas fa-folder-open"></i> <span data-i18n="optimizer.browse_output">Browse</span>
                                         </button>
+                                    </div>
+                                    <div class="recent-folders" id="recent-folders" style="display: none;">
+                                        <label><i class="fas fa-history"></i> <span data-i18n="optimizer.recent_folders">Recent Folders</span></label>
+                                        <select id="recent-folders-select" class="recent-folders-select">
+                                            <option value="" data-i18n="optimizer.select_recent">Select a recent folder...</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -350,6 +397,210 @@
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <div class="settings-group">
+                                    <h4><i class="fas fa-folder"></i> <span data-i18n="settings.file_handling">File Handling</span></h4>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="include-subdirectories" checked>
+                                        <span class="checkbox-custom"></span>
+                                        <span data-i18n="settings.include_subdirs">Include subdirectories</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="preserve-structure" checked>
+                                        <span class="checkbox-custom"></span>
+                                        <span data-i18n="settings.preserve_structure">Preserve folder structure</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="copy-non-images">
+                                        <span class="checkbox-custom"></span>
+                                        <span data-i18n="settings.copy_non_images">Copy non-image files to output</span>
+                                    </label>
+                                    
+                                    <div class="form-group">
+                                        <label for="background-color">
+                                            <i class="fas fa-palette"></i> <span data-i18n="settings.background_color">Background Color</span>
+                                        </label>
+                                        <div class="color-input-container">
+                                            <input type="color" id="background-color" value="#ffffff">
+                                            <input type="text" id="background-color-text" value="#ffffff">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="settings-group">
+                                    <h4><i class="fas fa-crop"></i> <span data-i18n="settings.image_editing">Image Editing</span></h4>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="enable-crop">
+                                        <span class="checkbox-custom"></span>
+                                        <span data-i18n="settings.enable_crop">Enable crop</span>
+                                    </label>
+                                    
+                                    <div class="form-group crop-settings" style="display: none;">
+                                        <label><i class="fas fa-arrows-alt"></i> <span data-i18n="settings.crop_mode">Crop Mode</span></label>
+                                        <select id="crop-mode" class="form-control">
+                                            <option value="custom" data-i18n="settings.crop_custom">Custom dimensions</option>
+                                            <option value="1:1" data-i18n="settings.crop_1_1">1:1 (Square)</option>
+                                            <option value="16:9" data-i18n="settings.crop_16_9">16:9 (Widescreen)</option>
+                                            <option value="4:3" data-i18n="settings.crop_4_3">4:3 (Standard)</option>
+                                            <option value="21:9" data-i18n="settings.crop_21_9">21:9 (Ultra-wide)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="dimension-input" id="crop-dimensions" style="display: none;">
+                                        <div class="dimension-group">
+                                            <label for="crop-width">
+                                                <i class="fas fa-arrows-alt-h"></i> <span data-i18n="settings.crop_width">Width</span>
+                                            </label>
+                                            <input type="number" id="crop-width" min="1" max="10000" value="1920">
+                                        </div>
+                                        <span class="dimension-separator">×</span>
+                                        <div class="dimension-group">
+                                            <label for="crop-height">
+                                                <i class="fas fa-arrows-alt-v"></i> <span data-i18n="settings.crop_height">Height</span>
+                                            </label>
+                                            <input type="number" id="crop-height" min="1" max="10000" value="1080">
+                                        </div>
+                                    </div>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="enable-rotate">
+                                        <span class="checkbox-custom"></span>
+                                        <span data-i18n="settings.enable_rotate">Enable rotate & flip</span>
+                                    </label>
+                                    
+                                    <div class="form-group rotate-settings" style="display: none;">
+                                        <label><i class="fas fa-sync-alt"></i> <span data-i18n="settings.rotation_angle">Rotation Angle</span></label>
+                                        <select id="rotation-angle" class="form-control">
+                                            <option value="0" data-i18n="settings.rotate_none">No rotation</option>
+                                            <option value="90" data-i18n="settings.rotate_90">90° clockwise</option>
+                                            <option value="180" data-i18n="settings.rotate_180">180°</option>
+                                            <option value="270" data-i18n="settings.rotate_270">270° clockwise</option>
+                                        </select>
+                                        
+                                        <label class="checkbox-label mt-3">
+                                            <input type="checkbox" id="flip-horizontal">
+                                            <span class="checkbox-custom"></span>
+                                            <span data-i18n="settings.flip_horizontal">Flip Horizontal</span>
+                                        </label>
+                                        
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="flip-vertical">
+                                            <span class="checkbox-custom"></span>
+                                            <span data-i18n="settings.flip_vertical">Flip Vertical</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="settings-group">
+                                    <h4><i class="fas fa-adjust"></i> <span data-i18n="settings.adjustments">Adjustments</span></h4>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="enable-adjustments">
+                                        <span class="checkbox-custom"></span>
+                                        <span data-i18n="settings.enable_adjustments">Enable adjustments</span>
+                                    </label>
+                                    
+                                    <div class="adjustments-settings" style="display: none;">
+                                        <div class="form-group">
+                                            <label for="brightness-slider">
+                                                <i class="fas fa-sun"></i> <span data-i18n="settings.brightness">Brightness</span>
+                                            </label>
+                                            <div class="slider-container">
+                                                <input type="range" id="brightness-slider" min="-100" max="100" value="0">
+                                                <span class="slider-value" id="brightness-value">0</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="contrast-slider">
+                                                <i class="fas fa-adjust"></i> <span data-i18n="settings.contrast">Contrast</span>
+                                            </label>
+                                            <div class="slider-container">
+                                                <input type="range" id="contrast-slider" min="-100" max="100" value="0">
+                                                <span class="slider-value" id="contrast-value">0</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="saturation-slider">
+                                                <i class="fas fa-tint"></i> <span data-i18n="settings.saturation">Saturation</span>
+                                            </label>
+                                            <div class="slider-container">
+                                                <input type="range" id="saturation-slider" min="-100" max="100" value="0">
+                                                <span class="slider-value" id="saturation-value">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="settings-group">
+                                    <h4><i class="fas fa-magic"></i> <span data-i18n="settings.filters">Filters</span></h4>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="enable-filters">
+                                        <span class="checkbox-custom"></span>
+                                        <span data-i18n="settings.enable_filters">Enable filters</span>
+                                    </label>
+                                    
+                                    <div class="form-group filters-settings" style="display: none;">
+                                        <label><i class="fas fa-filter"></i> <span data-i18n="settings.filter_type">Filter Type</span></label>
+                                        <select id="filter-type" class="form-control">
+                                            <option value="none" data-i18n="settings.filter_none">None</option>
+                                            <option value="blur" data-i18n="settings.filter_blur">Blur</option>
+                                            <option value="sharpen" data-i18n="settings.filter_sharpen">Sharpen</option>
+                                            <option value="grayscale" data-i18n="settings.filter_grayscale">Grayscale</option>
+                                            <option value="sepia" data-i18n="settings.filter_sepia">Sepia</option>
+                                        </select>
+                                        
+                                        <div class="form-group mt-3" id="filter-strength-group" style="display: none;">
+                                            <label for="filter-strength">
+                                                <i class="fas fa-sliders-h"></i> <span data-i18n="settings.filter_strength">Filter Strength</span>
+                                            </label>
+                                            <div class="slider-container">
+                                                <input type="range" id="filter-strength" min="1" max="10" value="5">
+                                                <span class="slider-value" id="filter-strength-value">5</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="settings-group">
+                                    <h4><i class="fas fa-cog"></i> <span data-i18n="settings.image_enhancement">Image Enhancement</span></h4>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="maintain-aspect">
+                                        <span class="checkbox-custom"></span>
+                                        <span data-i18n="settings.maintain_aspect">Maintain aspect ratio</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="enlarge-images">
+                                        <span class="checkbox-custom"></span>
+                                        <span data-i18n="settings.allow_enlargement">Allow image enlargement</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="preserve-exif">
+                                        <span class="checkbox-custom"></span>
+                                        <span data-i18n="settings.preserve_exif">Preserve EXIF data</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="reset-counter">
+                                        <span class="checkbox-custom"></span>
+                                        <span data-i18n="settings.reset_counter">Reset counter in each directory</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="change-case">
+                                        <span class="checkbox-custom"></span>
+                                        <span data-i18n="settings.change_case">Apply case changes to filenames</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -364,25 +615,12 @@
                                     <i class="fas fa-play"></i> <span data-i18n="optimizer.start_processing">Start Processing</span>
                                 </button>
                             </div>
-
-                            <div class="directory-options">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="include-subdirectories" checked>
-                                    <span class="checkbox-custom"></span>
-                                    <span data-i18n="settings.include_subdirs">Include subdirectories</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="preserve-structure" checked>
-                                    <span class="checkbox-custom"></span>
-                                    <span data-i18n="settings.preserve_structure">Preserve folder structure</span>
-                                </label>
-                            </div>
                         </div>
                     </div>
 
                     <div class="card" id="processing-progress" style="display: none;">
                         <div class="card-header">
-                            <h3><i class="fas fa-cogs fa-spin"></i> <span data-i18n="optimizer.processing_images">Processing Images</span></h3>
+                            <h3><i class="fas fa-cogs"></i> <span data-i18n="optimizer.processing_images">Processing Images</span></h3>
                             <div class="progress-stats">
                                 <span id="progress-text" data-i18n="optimizer.processing_status">Processing...</span>
                                 <span id="progress-percentage">0%</span>
@@ -415,6 +653,7 @@
                         </div>
                     </div>
 
+
                     <div class="card" id="processing-results" style="display: none;">
                         <div class="card-header">
                             <h3><i class="fas fa-check-circle"></i> <span data-i18n="optimizer.processing_complete">Processing Complete</span></h3>
@@ -430,68 +669,482 @@
                     </div>
                 </div>
 
-                <div class="tab-content" id="settings-tab">
+                <div class="tab-content" id="combiner-tab">
                     <div class="page-header">
-                        <h2><i class="fas fa-cogs"></i> <span data-i18n="settings.advanced_title">Advanced Settings</span></h2>
-                        <p data-i18n="settings.advanced_subtitle">Fine-tune processing parameters for optimal results</p>
+                        <h2><i class="fas fa-layer-group"></i> <span data-i18n="combiner.title">Image Combiner</span></h2>
+                        <p data-i18n="combiner.subtitle">Combine multiple images or PDF pages into a single image</p>
                     </div>
 
-                    <div class="settings-grid">
-                        <div class="card settings-card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-palette"></i> <span data-i18n="settings.image_enhancement">Image Enhancement</span></h3>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-upload"></i> <span data-i18n="combiner.file_input">Images & PDFs</span></h3>
+                            <div class="file-stats">
+                                <span class="stat-item">
+                                    <span class="stat-label" data-i18n="optimizer.files">Files:</span>
+                                    <span class="stat-value" id="combiner-file-count">0</span>
+                                </span>
+                                <span class="stat-item">
+                                    <span class="stat-label" data-i18n="optimizer.total_size">Total Size:</span>
+                                    <span class="stat-value" id="combiner-total-size">0 MB</span>
+                                </span>
                             </div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label for="background-color">
-                                        <i class="fas fa-palette"></i> <span data-i18n="settings.background_color">Background Color</span>
-                                    </label>
-                                    <div class="color-input-container">
-                                        <input type="color" id="background-color" value="#ffffff">
-                                        <input type="text" id="background-color-text" value="#ffffff">
+                        </div>
+                        <div class="card-body">
+                            <div class="dropzone" id="combiner-dropzone">
+                                <div class="dropzone-content">
+                                    <i class="fas fa-layer-group dropzone-icon"></i>
+                                    <h3 data-i18n="combiner.drop_files">Drop images or PDF files here</h3>
+                                    <p data-i18n="combiner.or_browse">or click to browse files</p>
+                                    <div class="supported-formats">
+                                        <span data-i18n="combiner.supports">Supports images and PDF files</span>
+                                    </div>
+                                </div>
+                                <input type="file" id="combiner-file-input" multiple accept="image/*,.pdf">
+                            </div>
+
+                            <div class="file-list-container" id="combiner-file-list-container" style="display: none;">
+                                <div class="file-list-header">
+                                    <h4><i class="fas fa-list"></i> <span data-i18n="optimizer.selected_files">Selected Files</span></h4>
+                                    <button class="btn btn-sm btn-outline" id="combiner-clear-files">
+                                        <i class="fas fa-trash"></i> <span data-i18n="optimizer.clear_all">Clear All</span>
+                                    </button>
+                                </div>
+                                <div class="file-list" id="combiner-file-list"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-sliders-h"></i> <span data-i18n="combiner.output_settings">Output Settings</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-settings-grid">
+                                <div class="settings-group">
+                                    <h4><i class="fas fa-arrows-alt"></i> <span data-i18n="combiner.alignment">Alignment</span></h4>
+
+                                    <div class="form-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="combiner-alignment" value="vertical" id="combiner-vertical" checked>
+                                            <span class="radio-custom"></span>
+                                            <span data-i18n="combiner.vertical">Vertical (stack images)</span>
+                                        </label>
+
+                                        <label class="radio-label">
+                                            <input type="radio" name="combiner-alignment" value="horizontal" id="combiner-horizontal">
+                                            <span class="radio-custom"></span>
+                                            <span data-i18n="combiner.horizontal">Horizontal (side by side)</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="combiner-spacing">
+                                            <i class="fas fa-expand-arrows-alt"></i> <span data-i18n="combiner.spacing">Spacing Between Images</span>
+                                        </label>
+                                        <div class="slider-container">
+                                            <input type="range" id="combiner-spacing" min="0" max="100" value="10">
+                                            <span class="slider-value" id="combiner-spacing-value">10px</span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="maintain-aspect">
-                                    <span class="checkbox-custom"></span>
-                                    <span data-i18n="settings.maintain_aspect">Maintain aspect ratio</span>
-                                </label>
+                                <div class="settings-group">
+                                    <h4><i class="fas fa-expand"></i> <span data-i18n="combiner.max_dimensions">Maximum Output Dimensions</span></h4>
 
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="enlarge-images">
-                                    <span class="checkbox-custom"></span>
-                                    <span data-i18n="settings.allow_enlargement">Allow image enlargement</span>
-                                </label>
+                                    <div class="form-group">
+                                        <label><i class="fas fa-ruler"></i> <span data-i18n="settings.dimensions">Dimensions</span></label>
+                                        <div class="dimension-inputs">
+                                            <div class="dimension-input">
+                                                <label for="combiner-max-width" style="margin-bottom: 0.25rem;">
+                                                    <span data-i18n="combiner.max_width">Max Width</span>
+                                                </label>
+                                                <input type="number" id="combiner-max-width" value="3000" min="100">
+                                                <span>px</span>
+                                            </div>
+                                            <div class="dimension-input">
+                                                <label for="combiner-max-height" style="margin-bottom: 0.25rem;">
+                                                    <span data-i18n="combiner.max_height">Max Height</span>
+                                                </label>
+                                                <input type="number" id="combiner-max-height" value="3000" min="100">
+                                                <span>px</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="combiner-background-color">
+                                            <i class="fas fa-palette"></i> <span data-i18n="combiner.background_color">Background Color</span>
+                                        </label>
+                                        <div class="color-input-container">
+                                            <input type="color" id="combiner-background-color" value="#ffffff">
+                                            <input type="text" id="combiner-background-color-text" value="#ffffff">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="settings-group">
+                                    <h4><i class="fas fa-file-image"></i> <span data-i18n="settings.format_quality">Format & Quality</span></h4>
+
+                                    <div class="form-group">
+                                        <label for="combiner-output-format">
+                                            <i class="fas fa-file-image"></i> <span data-i18n="settings.output_format">Output Format</span>
+                                        </label>
+                                        <select id="combiner-output-format">
+                                            <option value="jpg">JPEG (.jpg)</option>
+                                            <option value="png">PNG (.png)</option>
+                                            <option value="webp">WebP (.webp)</option>
+                                            <option value="tiff">TIFF (.tiff)</option>
+                                            <option value="avif">AVIF (.avif)</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="combiner-quality">
+                                            <i class="fas fa-compress"></i> <span data-i18n="settings.quality_level">Quality Level</span>
+                                        </label>
+                                        <div class="slider-container">
+                                            <input type="range" id="combiner-quality" min="1" max="100" value="90">
+                                            <span class="slider-value" id="combiner-quality-value">90</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="card settings-card">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-folder-open"></i> <span data-i18n="settings.output_folder">Output Folder</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="output-options">
+                                <label class="radio-label">
+                                    <input type="radio" name="combiner-output-mode" value="source" id="combiner-output-mode-source" checked>
+                                    <span class="radio-custom"></span>
+                                    <span data-i18n="settings.use_source_folder">Use source folder</span>
+                                </label>
+
+                                <label class="radio-label">
+                                    <input type="radio" name="combiner-output-mode" value="custom" id="combiner-output-mode-custom">
+                                    <span class="radio-custom"></span>
+                                    <span data-i18n="settings.use_custom_folder">Use custom folder</span>
+                                </label>
+                            </div>
+
+                            <div class="output-folder-selection" id="combiner-output-folder-selection" style="display: none;">
+                                <div class="form-group">
+                                    <label><i class="fas fa-folder"></i> <span data-i18n="optimizer.select_output">Select Output Folder</span></label>
+                                    <div class="file-input-container">
+                                        <input type="text" id="combiner-output-folder-input" readonly data-i18n-placeholder="optimizer.select_output">
+                                        <button class="btn btn-outline" id="combiner-browse-output-folder">
+                                            <i class="fas fa-folder-open"></i> <span data-i18n="optimizer.browse_output">Browse</span>
+                                        </button>
+                                    </div>
+                                    <div class="recent-folders" id="combiner-recent-folders" style="display: none;">
+                                        <label><i class="fas fa-history"></i> <span data-i18n="optimizer.recent_folders">Recent Folders</span></label>
+                                        <select id="combiner-recent-folders-select" class="recent-folders-select">
+                                            <option value="" data-i18n="optimizer.select_recent">Select a recent folder...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="output-folder-display">
+                                <span class="folder-label" data-i18n="optimizer.output">Output:</span>
+                                <span class="folder-path" id="combiner-output-folder-path" data-i18n="optimizer.same_as_source">Same as source</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-play"></i> <span data-i18n="combiner.combining">Combining</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="processing-controls" id="combiner-processing-controls" style="display: none;">
+                                <button class="btn btn-primary btn-large" id="start-combining">
+                                    <i class="fas fa-layer-group"></i> <span data-i18n="combiner.combine_images">Combine Images</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="combiner-progress" style="display: none;">
+                        <div class="card-header">
+                            <h3><i class="fas fa-layer-group"></i> <span data-i18n="combiner.combining">Combining Images</span></h3>
+                            <div class="progress-stats">
+                                <span id="combiner-progress-text" data-i18n="combiner.combining_status">Combining images...</span>
+                                <span id="combiner-progress-percentage">0%</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="combiner-progress-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="combiner-results" style="display: none;">
+                        <div class="card-header">
+                            <h3><i class="fas fa-check-circle"></i> <span data-i18n="combiner.combine_complete">Combining Complete</span></h3>
+                            <div class="results-actions">
+                                <button class="btn btn-sm btn-outline" id="combiner-open-output-folder">
+                                    <i class="fas fa-folder-open"></i> <span data-i18n="optimizer.open_output">Open Output Folder</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="results-summary" id="combiner-results-summary"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="help-tab">
+                    <div class="page-header">
+                        <h2><i class="fas fa-question-circle"></i> <span data-i18n="help.title">Help & Documentation</span></h2>
+                        <p data-i18n="help.subtitle">Learn how to use Image Optimizer effectively</p>
+                    </div>
+
+                    <div class="help-grid">
+                        <div class="card help-card">
                             <div class="card-header">
-                                <h3><i class="fas fa-folder"></i> <span data-i18n="settings.file_handling">File Handling</span></h3>
+                                <h3><i class="fas fa-rocket"></i> <span data-i18n="help.getting_started">Getting Started</span></h3>
                             </div>
                             <div class="card-body">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="copy-non-images">
-                                    <span class="checkbox-custom"></span>
-                                    <span data-i18n="settings.copy_non_images">Copy non-image files to output</span>
-                                </label>
+                                <div class="help-steps">
+                                    <div class="help-step">
+                                        <span data-i18n="help.step1">1. Select your images by dragging and dropping or clicking to browse</span>
+                                    </div>
+                                    <div class="help-step">
+                                        <span data-i18n="help.step2">2. Choose output location: same folder as source or custom folder</span>
+                                    </div>
+                                    <div class="help-step">
+                                        <span data-i18n="help.step3">3. Configure processing options in Quick Settings</span>
+                                    </div>
+                                    <div class="help-step">
+                                        <span data-i18n="help.step4">4. Click "Start Processing" to optimize your images</span>
+                                    </div>
+                                    <div class="help-step">
+                                        <span data-i18n="help.step5">5. View results and open the output folder when complete</span>
+                                    </div>
+                                </div>
 
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="reset-counter">
-                                    <span class="checkbox-custom"></span>
-                                    <span data-i18n="settings.reset_counter">Reset counter in each directory</span>
-                                </label>
-
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="change-case">
-                                    <span class="checkbox-custom"></span>
-                                    <span data-i18n="settings.change_case">Apply case changes to filenames</span>
-                                </label>
+                                <h4 data-i18n="help.combiner_getting_started">Image Combiner Getting Started</h4>
+                                <div class="help-steps">
+                                    <div class="help-step">
+                                        <span data-i18n="help.combiner_step1">1. Add images or PDF files to the combiner</span>
+                                    </div>
+                                    <div class="help-step">
+                                        <span data-i18n="help.combiner_step2">2. Choose alignment: vertical (stack) or horizontal (side by side)</span>
+                                    </div>
+                                    <div class="help-step">
+                                        <span data-i18n="help.combiner_step3">3. Set maximum dimensions and spacing between images</span>
+                                    </div>
+                                    <div class="help-step">
+                                        <span data-i18n="help.combiner_step4">4. Configure output format and quality settings</span>
+                                    </div>
+                                    <div class="help-step">
+                                        <span data-i18n="help.combiner_step5">5. Click "Combine Images" to create your combined image</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="card settings-card">
+                        <div class="card help-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-star"></i> <span data-i18n="help.optimizer_features">Image Optimizer Features</span></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="feature-list">
+                                    <div class="feature-item" data-i18n="help.feature1">Batch processing of multiple images simultaneously</div>
+                                    <div class="feature-item" data-i18n="help.feature2">Format conversion between JPEG, PNG, WebP, TIFF, and AVIF</div>
+                                    <div class="feature-item" data-i18n="help.feature3">Quality adjustment and intelligent compression</div>
+                                    <div class="feature-item" data-i18n="help.feature4">Image resizing with multiple fit modes and aspect ratio control</div>
+                                    <div class="feature-item" data-i18n="help.feature5">Watermark overlay with customizable position, opacity, and size</div>
+                                    <div class="feature-item" data-i18n="help.feature6">Batch rename with patterns, counters, and date/time stamps</div>
+                                    <div class="feature-item" data-i18n="help.feature7">Crop images with presets or custom dimensions</div>
+                                    <div class="feature-item" data-i18n="help.feature8">Rotate and flip images</div>
+                                    <div class="feature-item" data-i18n="help.feature9">Adjust brightness, contrast, and saturation</div>
+                                    <div class="feature-item" data-i18n="help.feature10">Apply blur and sharpen filters</div>
+                                    <div class="feature-item" data-i18n="help.feature11">Preserve EXIF metadata</div>
+                                    <div class="feature-item" data-i18n="help.feature12">Recent folders for quick access</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card help-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-layer-group"></i> <span data-i18n="help.combiner_features">Image Combiner Features</span></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="feature-list">
+                                    <div class="feature-item" data-i18n="help.feature_combiner1">Combine multiple images or PDF pages into single image</div>
+                                    <div class="feature-item" data-i18n="help.feature_combiner2">Vertical or horizontal alignment options</div>
+                                    <div class="feature-item" data-i18n="help.feature_combiner3">Automatic scaling to fit maximum dimensions</div>
+                                    <div class="feature-item" data-i18n="help.feature_combiner4">Customizable spacing between images</div>
+                                    <div class="feature-item" data-i18n="help.feature_combiner5">Background color selection</div>
+                                    <div class="feature-item" data-i18n="help.feature_combiner6">PDF page extraction and conversion</div>
+                                    <div class="feature-item" data-i18n="help.feature_combiner7">Support for mixed image and PDF inputs</div>
+                                    <div class="feature-item" data-i18n="help.feature_combiner8">Output format and quality settings</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card help-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-cogs"></i> <span data-i18n="help.advanced_features">Advanced Features</span></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="feature-list">
+                                    <div class="feature-item" data-i18n="help.feature_advanced1">Background color replacement for transparent images</div>
+                                    <div class="feature-item" data-i18n="help.feature_advanced2">Maintain or ignore aspect ratios during resize</div>
+                                    <div class="feature-item" data-i18n="help.feature_advanced3">Allow or prevent image enlargement</div>
+                                    <div class="feature-item" data-i18n="help.feature_advanced4">Copy non-image files to output directory</div>
+                                    <div class="feature-item" data-i18n="help.feature_advanced5">Preserve folder structure in output</div>
+                                    <div class="feature-item" data-i18n="help.feature_advanced6">Include/exclude subdirectories</div>
+                                    <div class="feature-item" data-i18n="help.feature_advanced7">Automatic updates with version checking</div>
+                                    <div class="feature-item" data-i18n="help.feature_advanced8">Multi-language support (English and German)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card help-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-file-image"></i> <span data-i18n="help.supported_formats">Supported Formats</span></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="format-support">
+                                    <div class="support-section">
+                                        <h4 data-i18n="help.input_formats">Input Formats:</h4>
+                                        <div class="format-tags">
+                                            <span class="format-tag">JPEG</span>
+                                            <span class="format-tag">PNG</span>
+                                            <span class="format-tag">WebP</span>
+                                            <span class="format-tag">TIFF</span>
+                                            <span class="format-tag">GIF</span>
+                                            <span class="format-tag">AVIF</span>
+                                            <span class="format-tag">SVG</span>
+                                            <span class="format-tag">PDF</span>
+                                        </div>
+                                    </div>
+                                    <div class="support-section">
+                                        <h4 data-i18n="help.output_formats">Output Formats:</h4>
+                                        <div class="format-tags">
+                                            <span class="format-tag">JPEG</span>
+                                            <span class="format-tag">PNG</span>
+                                            <span class="format-tag">WebP</span>
+                                            <span class="format-tag">TIFF</span>
+                                            <span class="format-tag">AVIF</span>
+                                        </div>
+                                    </div>
+                                    <div class="support-section">
+                                        <h4 data-i18n="help.pdf_support">PDF Support:</h4>
+                                        <p data-i18n="help.pdf_note">PDF files are converted page-by-page into images for processing</p>
+                                    </div>
+                                </div>
+
+                                <div class="format-notes">
+                                    <h4 data-i18n="help.format_notes">Format Recommendations:</h4>
+                                    <div class="feature-list">
+                                        <div class="feature-item" data-i18n="help.format_note1">WebP and AVIF provide superior compression with excellent quality</div>
+                                        <div class="feature-item" data-i18n="help.format_note2">PNG is ideal for images requiring transparency preservation</div>
+                                        <div class="feature-item" data-i18n="help.format_note3">TIFF offers lossless compression for archival purposes</div>
+                                        <div class="feature-item" data-i18n="help.format_note4">JPEG provides universal compatibility with good compression</div>
+                                        <div class="feature-item" data-i18n="help.format_note5">SVG and GIF are supported as input formats only</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="card help-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-tools"></i> <span data-i18n="help.troubleshooting">Troubleshooting</span></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="settings-help">
+                                    <div class="setting-item">
+                                        <h5 data-i18n="help.trouble_memory">Out of Memory:</h5>
+                                        <p data-i18n="help.trouble_memory_desc">Process fewer images at once or resize large images before processing</p>
+                                    </div>
+
+                                    <div class="setting-item">
+                                        <h5 data-i18n="help.trouble_format">Unsupported Format:</h5>
+                                        <p data-i18n="help.trouble_format_desc">Ensure input files are in supported formats (JPEG, PNG, WebP, TIFF, GIF, AVIF, SVG, PDF)</p>
+                                    </div>
+
+                                    <div class="setting-item">
+                                        <h5 data-i18n="help.trouble_permission">Permission Denied:</h5>
+                                        <p data-i18n="help.trouble_permission_desc">Check file and folder permissions, run as administrator if necessary</p>
+                                    </div>
+
+                                    <div class="setting-item">
+                                        <h5 data-i18n="help.trouble_space">Insufficient Disk Space:</h5>
+                                        <p data-i18n="help.trouble_space_desc">Free up disk space in the output directory before processing</p>
+                                    </div>
+
+                                    <div class="setting-item">
+                                        <h5 data-i18n="help.performance_tips_title">Performance Tips:</h5>
+                                        <p data-i18n="help.performance_tips_desc">Process images in smaller batches for better memory management. Use WebP or AVIF formats for optimal file size reduction. Disable watermarks when not needed to improve processing speed. Choose appropriate quality levels (80-95 for photos, 60-80 for web). Consider resizing large images to reduce processing time.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card help-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-keyboard"></i> <span data-i18n="help.keyboard_shortcuts">Keyboard Shortcuts</span></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="shortcuts-list">
+                                    <div class="shortcut-item">
+                                        <kbd>1-3</kbd>
+                                        <span data-i18n="help.shortcut_switch_tabs">Switch between main sections</span>
+                                    </div>
+                                    <div class="shortcut-item">
+                                        <kbd>Ctrl/Cmd</kbd> + <kbd>Del</kbd>
+                                        <span data-i18n="help.shortcut_clear">Clear all files</span>
+                                    </div>
+                                    <div class="shortcut-item">
+                                        <kbd>Ctrl/Cmd</kbd> + <kbd>Enter</kbd>
+                                        <span data-i18n="help.shortcut_process">Start processing</span>
+                                    </div>
+                                    <div class="shortcut-item">
+                                        <kbd>Ctrl/Cmd</kbd> + <kbd>O</kbd>
+                                        <span data-i18n="help.shortcut_output">Open output folder</span>
+                                    </div>
+                                    <div class="shortcut-item">
+                                        <kbd>Escape</kbd>
+                                        <span data-i18n="help.shortcut_cancel">Cancel processing</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card help-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-info-circle"></i> <span data-i18n="help.about">About Image Optimizer</span></h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="about-info">
+                                    <div class="app-info">
+                                        <img src="assets/logo.svg" alt="Image Optimizer" class="about-logo">
+                                        <h4 data-i18n="app.title">Image Optimizer</h4>
+                                        <p data-i18n="help.version_info">Version 1.1.0 - Built with Electron and modern web technologies</p>
+                                        <p data-i18n="help.description">Professional batch image processing and combining tool</p>
+                                    </div>
+                                    <div class="credits">
+                                        <p data-i18n="help.built_with">Built by www.bavamont.com</p>
+                                        <p data-i18n="help.powered_by">Powered by libvips and sharp.js for lightning-fast image processing</p>
+                                        <p data-i18n="help.auto_updates">Automatic updates ensure you always have the latest features</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card help-card">
                             <div class="card-header">
                                 <h3><i class="fas fa-sync-alt"></i> <span data-i18n="updater.title">App Updater</span></h3>
                             </div>
@@ -499,7 +1152,7 @@
                                 <div class="update-info">
                                     <div class="form-group">
                                         <label><i class="fas fa-tag"></i> <span data-i18n="updater.current_version">Current Version:</span></label>
-                                        <div class="version-display" id="current-version">1.0.0</div>
+                                        <div class="version-display" id="current-version">1.1.0</div>
                                     </div>
 
                                     <label class="checkbox-label">
@@ -521,137 +1174,79 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="tab-content" id="help-tab">
-                    <div class="page-header">
-                        <h2><i class="fas fa-question-circle"></i> <span data-i18n="help.title">Help & Documentation</span></h2>
-                        <p data-i18n="help.subtitle">Learn how to use Image Optimizer effectively</p>
-                    </div>
-
-                    <div class="help-grid">
-                        <div class="card help-card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-rocket"></i> <span data-i18n="help.getting_started">Getting Started</span></h3>
-                            </div>
-                            <div class="card-body">
-                                <ol>
-                                    <li data-i18n="help.step1">Drag and drop images into the dropzone or click to browse files</li>
-                                    <li data-i18n="help.step2">Choose output location: same folder as source or custom folder</li>
-                                    <li data-i18n="help.step3">Configure processing options in Quick Settings (format, quality, resize, watermark, batch rename)</li>
-                                    <li data-i18n="help.step4">Click "Start Processing" to optimize your images</li>
-                                    <li data-i18n="help.step5">View results and open the output folder when complete</li>
-                                </ol>
-
-                                <h4 data-i18n="help.key_features">Key Features:</h4>
-                                <ul>
-                                    <li data-i18n="help.feature1">Batch processing of multiple images</li>
-                                    <li data-i18n="help.feature2">Format conversion (JPEG, PNG, WebP, TIFF, AVIF)</li>
-                                    <li data-i18n="help.feature3">Quality adjustment and compression</li>
-                                    <li data-i18n="help.feature4">Image resizing with multiple fit modes</li>
-                                    <li data-i18n="help.feature5">Watermark overlay with position and opacity control</li>
-                                    <li data-i18n="help.feature6">Batch rename with patterns and counters</li>
-                                    <li data-i18n="help.feature7">Preserve folder structure option</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="card help-card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-file-image"></i> <span data-i18n="help.supported_formats">Supported Formats</span></h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="format-support">
-                                    <div class="support-section">
-                                        <h4 data-i18n="help.input_formats">Input Formats:</h4>
-                                        <div class="format-tags">
-                                            <span class="format-tag">JPEG</span>
-                                            <span class="format-tag">PNG</span>
-                                            <span class="format-tag">WebP</span>
-                                            <span class="format-tag">TIFF</span>
-                                            <span class="format-tag">GIF</span>
-                                            <span class="format-tag">AVIF</span>
-                                            <span class="format-tag">SVG</span>
-                                        </div>
-                                    </div>
-                                    <div class="support-section">
-                                        <h4 data-i18n="help.output_formats">Output Formats:</h4>
-                                        <div class="format-tags">
-                                            <span class="format-tag">JPEG</span>
-                                            <span class="format-tag">PNG</span>
-                                            <span class="format-tag">WebP</span>
-                                            <span class="format-tag">TIFF</span>
-                                            <span class="format-tag">AVIF</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="format-notes">
-                                    <h4 data-i18n="help.format_notes">Format Notes:</h4>
-                                    <ul>
-                                        <li data-i18n="help.format_note1">WebP and AVIF offer better compression than JPEG</li>
-                                        <li data-i18n="help.format_note2">PNG is best for images with transparency</li>
-                                        <li data-i18n="help.format_note3">TIFF is ideal for high-quality archival images</li>
-                                        <li data-i18n="help.format_note4">SVG and GIF are read-only formats</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card help-card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-cogs"></i> <span data-i18n="help.settings_guide">Settings Guide</span></h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="settings-help">
-                                    <div class="setting-item">
-                                        <h5 data-i18n="help.output_folder_help">Output Folder:</h5>
-                                        <p data-i18n="help.output_folder_desc">Choose to save processed images in the same folder as originals or select a custom output folder. Enable "Create subfolder" to organize processed images.</p>
-                                    </div>
-
-                                    <div class="setting-item">
-                                        <h5 data-i18n="help.resize_help">Resize Options:</h5>
-                                        <p data-i18n="help.resize_desc">Resize images to specific dimensions. Choose fit mode: Cover (crop to fit), Contain (fit inside), Fill (stretch), Inside (shrink only), or Outside (enlarge only).</p>
-                                    </div>
-
-                                    <div class="setting-item">
-                                        <h5 data-i18n="help.watermark_help">Watermark:</h5>
-                                        <p data-i18n="help.watermark_desc">Add a watermark image to all processed images. PNG files with transparency work best. Adjust position, opacity, and size as needed.</p>
-                                    </div>
-
-                                    <div class="setting-item">
-                                        <h5 data-i18n="help.batch_rename_help">Batch Rename:</h5>
-                                        <p data-i18n="help.batch_rename_desc">Rename files using patterns. Use {counter} for numbers, {date} for current date, {time} for current time, and {original} for original filename.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card help-card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-info-circle"></i> <span data-i18n="help.about">About</span></h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="about-info">
-                                    <div class="app-info">
-                                        <img src="assets/logo.svg" alt="Image Optimizer" class="about-logo">
-                                        <h4 data-i18n="app.title">Image Optimizer</h4>
-                                        <p>Version 1.0.0</p>
-                                        <p data-i18n="help.description">Batch image processing tool</p>
-                                    </div>
-                                    <div class="credits">
-                                        <p data-i18n="help.built_with">www.bavamont.com</p>
-                                        <p data-i18n="help.powered_by">Powered by libvips and sharp.js for fast image processing</p>
-                                        <p data-i18n="help.auto_updates">Automatic updates keep you current</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </main>
 
         <div id="toast-container" class="toast-container"></div>
+
+        <div id="fullscreen-processing" class="fullscreen-overlay" style="display: none;">
+            <div class="fullscreen-processing-container">
+                <div class="processing-animation">
+                    <div class="processing-spinner">
+                        <div class="spinner-ring"></div>
+                        <div class="spinner-ring"></div>
+                        <div class="spinner-ring"></div>
+                    </div>
+                </div>
+                
+                <div class="processing-content">
+                    <h2 id="fullscreen-title" data-i18n="processing.fullscreen_title">Processing Images</h2>
+                    <p id="fullscreen-subtitle" data-i18n="processing.fullscreen_subtitle">Please wait while we optimize your images</p>
+                    
+                    <div class="processing-stage">
+                        <div class="stage-icon">
+                            <i id="stage-icon" class="fas fa-cogs"></i>
+                        </div>
+                        <div class="stage-text">
+                            <div id="stage-title">Preparing...</div>
+                            <div id="stage-description"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-section">
+                        <div class="progress-bar-fullscreen">
+                            <div class="progress-fill-fullscreen" id="fullscreen-progress-fill"></div>
+                            <div class="progress-text-overlay">
+                                <span id="fullscreen-progress-text">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-details">
+                            <div class="progress-stat">
+                                <span class="stat-label" data-i18n="optimizer.processed">Processed:</span>
+                                <span class="stat-value" id="fullscreen-processed">0</span>
+                            </div>
+                            <div class="progress-stat">
+                                <span class="stat-label" data-i18n="optimizer.remaining">Remaining:</span>
+                                <span class="stat-value" id="fullscreen-remaining">0</span>
+                            </div>
+                            <div class="progress-stat">
+                                <span class="stat-label" data-i18n="processing.time_elapsed">Time elapsed:</span>
+                                <span class="stat-value" id="fullscreen-time-elapsed">00:00</span>
+                            </div>
+                            <div class="progress-stat">
+                                <span class="stat-label" data-i18n="processing.time_remaining">Time remaining:</span>
+                                <span class="stat-value" id="fullscreen-time-remaining">
+                                    <span data-i18n="processing.estimated">estimated</span> 00:00
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="current-task">
+                        <div class="task-label" data-i18n="optimizer.current">Current:</div>
+                        <div class="task-filename" id="fullscreen-current-file">-</div>
+                    </div>
+                    
+                    <div class="processing-actions">
+                        <button class="btn btn-outline" id="cancel-processing">
+                            <i class="fas fa-times"></i>
+                            <span id="cancel-processing-text" data-i18n="processing.fullscreen_cancel">Cancel Processing</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div id="update-modal" class="modal" style="display: none;">
             <div class="modal-content">
@@ -663,11 +1258,11 @@
                         <div class="version-info">
                             <div class="version-item">
                                 <span data-i18n="updater.current_version">Current Version:</span>
-                                <span id="modal-current-version">1.0.0</span>
+                                <span id="modal-current-version">1.1.0</span>
                             </div>
                             <div class="version-item">
                                 <span data-i18n="updater.new_version">New Version:</span>
-                                <span id="modal-new-version">1.0.1</span>
+                                <span id="modal-new-version">1.1.1</span>
                             </div>
                         </div>
 
